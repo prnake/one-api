@@ -47,6 +47,7 @@ func GetImageSizeFromUrl(url string) (width int, height int, err error) {
 	return img.Width, img.Height, nil
 }
 
+
 func GetImageFromUrl(url string) (mimeType string, data string, err error) {
 	// Check if the URL is a data URL
 	matches := dataURLPattern.FindStringSubmatch(url)
@@ -71,7 +72,19 @@ func GetImageFromUrl(url string) (mimeType string, data string, err error) {
 	if err != nil {
 		return
 	}
-	mimeType = resp.Header.Get("Content-Type")
+	ext := strings.ToLower(filepath.Ext(url))
+	switch ext {
+	case ".jpg", ".jpeg":
+		mimeType = "image/jpeg"
+	case ".png":
+		mimeType = "image/png"
+	case ".gif":
+		mimeType = "image/gif"
+	case ".webp":
+		mimeType = "image/webp"
+	default:
+		mimeType = resp.Header.Get("Content-Type")
+	}
 	data = base64.StdEncoding.EncodeToString(buffer.Bytes())
 	return
 }
